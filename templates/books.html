@@ -49,39 +49,154 @@
         .hidden {
             display: none;
         }
+
+        .book {
+            object-fit: cover;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .year {
+            font-size: 24px;
+            margin-top: 20px;
+            margin-left: 10px;
+            vertical-align: top;
+            color: crimson;
+        }
+
+        .cover {
+            width: 100px;
+            height: 133px;
+            object-fit: fill;
+            display: inline-block;
+        }
+
+        .big-cover {
+            width: 240px;
+            height: 320px;
+            object-fit: fill;
+            display: inline-block;
+        }
+
+        .title {
+            height: calc(2em + 4px);
+            min-height: calc(2em + 4px);
+            max-height: calc(2em + 4px);
+            overflow: hidden;
+            font-size: 90%;
+            width: 240px;
+        }
     </style>
     <link rel="stylesheet" target="_blank" href="https://fonts.googleapis.com/css?family=Ubuntu">
     <link rel="stylesheet" target="_blank" href="https://fonts.googleapis.com/css?family=Lato">
 </head>
 <body>
 <div style="margin-left: 23px" class="hidden">
-    <h1 style="font-size: 50px; margin-bottom: 20px; margin-left: 6px">
-        <img src="assets/logo.png" style="vertical-align: middle; height: 80px">
-        <b style="padding-top: 20px; padding-left: 12px">Grady Booch's AI Reading List</b>
+    <h1 style="font-size: 70px; margin-bottom: 10px; margin-left: 6px">
+        <img src="assets/covers/book.png" style="vertical-align: middle; height: 100px">
+        <div style="display: inline-block; vertical-align: middle; padding-left: 12px">
+            <b style="padding-top: 20px; ">AI Reading List</b>
+            <p style="font-size: 17px">Based on <a href="https://twitter.com/Grady_Booch" target="_blank"
+                                                   style="color: #a0a0a0;">Grady Booch's</a> <a target="_blank"
+                                                                                                style="color: #a0a0a0;"
+                                                                                                href="https://docs.google.com/spreadsheets/d/1DTQJSygQGP3m74sWdRSt7Tv13NGOAWJBBriZu8Aoe-4/edit?usp=sharing">collection
+                of books</a> on AI, neuroscience, and what it means
+                to be human.</p>
+        </div>
     </h1>
     <br>
+</div>
+<div style="margin-left: 30px; margin-bottom: 40px; color: grey">
+    <div>
+        <input id="filter" type="text" placeholder="search books..."
+               style="font-size: 16px; height: 32px; width: 320px; margin-bottom: 10px" onkeyup="update()">
+        <div id="summary" style="display: inline-block"></div>
+    </div>
+    <label onclick="update()">
+        <input type="checkbox" id="group-by-year" checked style="width: 18px; height: 18px">
+        <div style="display: inline-block; vertical-align: top; margin-top: 2px">group by year</div>
+    </label>
+    &nbsp;&nbsp;&nbsp;
+    <label onclick="update()">
+        <input type="checkbox" id="show-details" checked style="width: 18px; height: 18px">
+        <div style="display: inline-block; vertical-align: top; margin-top: 2px">show title and page count</div>
+    </label>
+    &nbsp;&nbsp;&nbsp;
+    <label onclick="update()">
+        <input type="checkbox" id="overview" style="width: 18px; height: 18px">
+        <div style="display: inline-block; vertical-align: top; margin-top: 2px">show as a visual overview</div>
+    </label>
+</div>
+<div id="content">
 </div>
 
 <script>
     const books = ${data};
 
-    let html = '<div style="max-width: 1200px">';
-    books.forEach(function (source) {
-        source.data.forEach(function (book) {
-            html += '<div>';
-            html += book.title;
-            html += ('</div>');
-        });
-    });
-    html += ('</div>');
+    function update() {
+        let html = '<div style="margin: 20px;">';
+        let prevYear = null;
+        const overview = document.getElementById('overview').checked;
+        const showDetails = document.getElementById('show-details').checked && !overview;
+        const filter = document.getElementById('filter').value;
+        const byYear = document.getElementById('group-by-year').checked && !overview;
+        console.log(filter);
+        let count = 0;
+        let totalPages = 0;
+        books
+            .forEach(function (source) {
+                source.data
+                    .filter(book => filter === '' || (book.title + ' ' + book.primary_author + ' ' + book.date).toLowerCase().includes(filter.toLowerCase()))
+                    .sort((a, b) => b.date - a.date)
+                    .forEach(function (book) {
+                        count += 1;
+                        const year = book.date;
+                        const pages = book.pages;
+                        totalPages += pages;
+                        const width = Math.round(2 + 130 * Math.min(pages, 800) / 800);
+                        if (prevYear !== year && byYear) {
+                            prevYear = year;
+                            html += '<div class="year">';
+                            html += year;
+                            html += '</div>';
+                        }
+                        let info = book.title + ' by ' + book.primary_author + ' ' + book.date;
+                        html += '<a target="_blank" href="https://google.com/search?q=book ' + info + '">';
+                        html += '<div class="book" title="' + info + '">';
+                        if (showDetails) {
+                            html += '<div>';
+                            html += '<div style="vertical-align: middle; display: inline-block; background-color: black; height: 10px; width: ' + width + 'px">&nbsp;</div>';
+                            html += '<div style="margin-left: 2px; vertical-align: middle; display: inline-block; font-size: 80%; color: grey">' + book.pages + ' pages</div>';
+                            html += '</div>';
+                        }
+                        const coverImage = book.cover_image ? book.cover_image : 'book.png';
+                        if (overview) {
+                            html += '<img class="cover" src="assets/covers/' + coverImage + '">';
+                        } else {
+                            html += '<img class="big-cover" src="assets/covers/' + coverImage + '">';
+                        }
+                        if (showDetails) {
+                            html += '<div class="title">';
+                            html += book.title;
+                            html += '</div>';
+                        }
+                        html += '</div>';
+                        html += '</a>';
+                    });
+            });
+        html += ('</div>');
 
-    const div = document.createElement('div');
-    document.body.appendChild(div);
-    div.outerHTML = html;
+        document.getElementById('summary').innerHTML = ' = <b>' + count + '</b> ' + (count === 1 ? ' book' : ' books') + ', <b>' + totalPages + '</b> pages'
+
+        const div = document.getElementById('content');
+        div.innerHTML = html;
+    }
+
+    update();
 </script>
 <div style="margin: 27px; color: #a0a0a0; font-size: 80%" class="hidden">
     generated on ${date} based on this source
-    <a style="color: #a0a0a0;"
+    <a target="_blank" style="color: #a0a0a0;"
        href="https://docs.google.com/spreadsheets/d/1DTQJSygQGP3m74sWdRSt7Tv13NGOAWJBBriZu8Aoe-4/edit?usp=sharing">
         data sheet</a>
 </div>
