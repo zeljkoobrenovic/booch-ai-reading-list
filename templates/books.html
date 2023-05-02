@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grady Booch's AI Reading List</title>
+    <style type="text/css" media="all">
+        body {
+            font-family: Vollkorn, Ubuntu, Optima, Segoe, Segoe UI, Candara, Calibri, Arial, sans-serif;
+        }
+
+        .line {
+            vertical-align: middle;
+        }
+
+        .historyImg {
+            height: 42px;
+            width: 42px;
+            object-fit: cover;
+            filter: grayscale(0.7);
+            border: 1px solid #c3c3c3;
+            margin: 2px;
+            padding: 2px;
+            vertical-align: middle;
+            background-color: white;
+        }
+
+        .logo {
+            height: 42px;
+            border-radius: 5px;
+        }
+
+        .logo-cell {
+            vertical-align: middle;
+            background-color: white;
+            padding-right: 10px;
+        }
+
+        th {
+            horiz-align: center;
+            background-color: #f0f0f0;
+        }
+
+        td {
+            vertical-align: top;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" target="_blank" href="https://fonts.googleapis.com/css?family=Ubuntu">
+    <link rel="stylesheet" target="_blank" href="https://fonts.googleapis.com/css?family=Lato">
+</head>
+<body>
+<div style="margin-left: 23px" class="hidden">
+    <h1 style="font-size: 50px; margin-bottom: 20px; margin-left: 6px">
+        <img src="assets/logo.png" style="vertical-align: middle; height: 80px">
+        <b style="padding-top: 20px; padding-left: 12px">Grady Booch's AI Reading List</b>
+    </h1>
+    <br>
+</div>
+
+<script>
+    const books = ${data};
+
+    let html = '<div style="max-width: 1200px">';
+    books.forEach(function (source) {
+        source.data.forEach(function (book) {
+            html += '<div>';
+            html += book.title;
+            html += ('</div>');
+        });
+    });
+    html += ('</div>');
+
+    const div = document.createElement('div');
+    document.body.appendChild(div);
+    div.outerHTML = html;
+</script>
+<div style="margin: 27px; color: #a0a0a0; font-size: 80%" class="hidden">
+    generated on ${date} based on this source
+    <a style="color: #a0a0a0;"
+       href="https://docs.google.com/spreadsheets/d/1DTQJSygQGP3m74sWdRSt7Tv13NGOAWJBBriZu8Aoe-4/edit?usp=sharing">
+        data sheet</a>
+</div>
+</body>
+</html>
