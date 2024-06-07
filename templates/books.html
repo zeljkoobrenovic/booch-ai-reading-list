@@ -67,14 +67,14 @@
         .cover {
             width: 100px;
             height: 133px;
-            object-fit: fill;
+            object-fit: cover;
             display: inline-block;
         }
 
         .big-cover {
-            width: 240px;
+            width: 220px;
             height: 320px;
-            object-fit: fill;
+            object-fit: cover;
             display: inline-block;
         }
 
@@ -186,7 +186,7 @@
             });
         html += ('</div>');
 
-        document.getElementById('summary').innerHTML = ' = <b>' + count + '</b> ' + (count === 1 ? ' book' : ' books') + ', <b>' + totalPages + '</b> pages'
+        document.getElementById('summary').innerHTML = ' = <b>' + count + '</b> ' + (count === 1 ? ' book' : ' books') + ', <b>' + totalPages.toLocaleString('en-US') + '</b> pages'
 
         const div = document.getElementById('content');
         div.innerHTML = html;
